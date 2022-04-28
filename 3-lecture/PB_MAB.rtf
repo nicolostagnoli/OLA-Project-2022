@@ -1,0 +1,235 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2636
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fmodern\fcharset0 Courier;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue0;\red183\green111\blue179;
+\red202\green202\blue202;\red70\green137\blue204;\red67\green192\blue160;\red212\green212\blue212;\red212\green214\blue154;
+\red140\green211\blue254;\red167\green197\blue152;\red113\green184\blue255;\red194\green126\blue101;\red89\green156\blue62;
+}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\csgray\c0\c0;\cssrgb\c77255\c52549\c75294;
+\cssrgb\c83137\c83137\c83137;\cssrgb\c33725\c61176\c83922;\cssrgb\c30588\c78824\c69020;\cssrgb\c86275\c86275\c86275;\cssrgb\c86275\c86275\c66667;
+\cssrgb\c61176\c86275\c99608;\cssrgb\c70980\c80784\c65882;\cssrgb\c50980\c77647\c100000;\cssrgb\c80784\c56863\c47059;\cssrgb\c41569\c66275\c30980;
+}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs30 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec4 import\strokec5  numpy \strokec4 as\strokec5  np\
+\pard\pardeftab720\partightenfactor0
+\cf2 \strokec6 class\strokec5  \strokec7 Environment\strokec5 ()\strokec8 :\strokec5 \
+  \strokec6 def\strokec5  \strokec9 __init__\strokec5 (\strokec10 self\strokec5 ,\strokec10 n_arms\strokec5 , \strokec10 probabilities\strokec5 ) \strokec8 :\strokec5 \
+    \strokec10 self\strokec5 .n_arms = n_arms\
+    \strokec10 self\strokec5 .probabilities = probabilities \
+\
+  \strokec6 def\strokec5  \strokec9 round\strokec5 (\strokec10 self\strokec5 , \strokec10 pulled_arm\strokec5 ) \strokec8 :\strokec5 \
+   reward = np.random.binomial\strokec8 (\strokec11 1\strokec8 ,\strokec10 self\strokec5 .probabilities\strokec8 [\strokec5 pulled_arm\strokec8 ])\strokec5       \
+   \strokec4 return\strokec5  reward\
+\
+\
+\
+\
+\strokec6 class\strokec5  Learner\strokec8 :\strokec5 \
+\
+  \strokec6 def\strokec5  \strokec9 __init__\strokec5 (\strokec10 self\strokec5 , \strokec10 n_arms\strokec5 ) \strokec8 :\strokec5 \
+    \strokec10 self\strokec5 .n_arms = n_arms\
+    \strokec10 self\strokec5 .t = \strokec11 0\strokec5 \
+    \strokec10 self\strokec5 .rewards_per_arm = x = \strokec8 [[]\strokec5  \strokec4 for\strokec5  i \strokec12 in\strokec5  \strokec9 range\strokec8 (\strokec5 n_arms\strokec8 )]\strokec5 \
+    \strokec10 self\strokec5 .collected_rewards = np.array\strokec8 ([])\strokec5 \
+\
+  \strokec6 def\strokec5  \strokec9 update_observations\strokec5 (\strokec10 self\strokec5 ,\strokec10 pulled_arm\strokec5 , \strokec10 reward\strokec5 ) \strokec8 :\strokec5 \
+    \strokec10 self\strokec5 .rewards_per_arm\strokec8 [\strokec5 pulled_arm\strokec8 ]\strokec5 .append\strokec8 (\strokec5 reward\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .collected_rewards = np.append\strokec8 (\strokec10 self\strokec5 .collected_rewards\strokec8 ,\strokec5  reward\strokec8 )\strokec5 \
+\
+\
+\
+\
+\strokec6 class\strokec5  \strokec7 Environment_PBM\strokec5 (\strokec7 Environment\strokec5 )\strokec8 :\strokec5 \
+  \strokec6 def\strokec5  \strokec9 __init__\strokec5 (\strokec10 self\strokec5 , \strokec10 n_arms\strokec5 , \strokec10 n_positions\strokec5 , \strokec10 arm_probabilities\strokec5 , \strokec10 position_probabilities\strokec5 )\strokec8 :\strokec5 \
+    \strokec10 self\strokec5 .n_arms = n_arms\
+    \strokec10 self\strokec5 .n_positions = n_positions\
+    \strokec10 self\strokec5 .arm_probabilities = arm_probabilities\
+    \strokec10 self\strokec5 .position_probabilities = position_probabilities\
+    \strokec4 assert\strokec5  n_positions == \strokec9 len\strokec8 (\strokec5 position_probabilities\strokec8 )\strokec5 \
+    \strokec4 assert\strokec5  n_arms == \strokec9 len\strokec8 (\strokec5 arm_probabilities\strokec8 )\strokec5 \
+\
+  \strokec6 def\strokec5  \strokec9 round\strokec5 (\strokec10 self\strokec5 , \strokec10 super_arm\strokec5 )\strokec8 :\strokec5 \
+    \strokec4 assert\strokec5  \strokec9 len\strokec8 (\strokec5 super_arm\strokec8 )\strokec5  == \strokec10 self\strokec5 .n_positions\
+    position_obs = np.random.binomial\strokec8 (\strokec11 1\strokec8 ,\strokec5  \strokec10 self\strokec5 .position_probabilities\strokec8 )\strokec5 \
+    arm_probabilities = np. random.binomial\strokec8 (\strokec11 1\strokec8 ,\strokec5  \strokec10 self\strokec5 .arm_probabilities\strokec8 [\strokec5 super_arm\strokec8 ])\strokec5 \
+    \strokec4 return\strokec5  arm_probabilities*position_obs\
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \strokec4 import\strokec5  numpy \strokec4 as\strokec5  np\
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \strokec6 class\strokec5  \strokec7 PBM_UCB\strokec5 (\strokec7 Learner\strokec5 )\strokec8 :\strokec5 \
+  \strokec6 def\strokec5  \strokec9 __init__\strokec5 (\strokec10 self\strokec5 , \strokec10 n_arms\strokec5 , \strokec10 n_positions\strokec5 , \strokec10 position_probabilities\strokec5 , \strokec10 delta\strokec5 )\strokec8 :\strokec5 \
+    super\strokec8 ()\strokec5 .\strokec9 __init__\strokec8 (\strokec5 n_arms\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .position_probabilities = position_probabilities\
+    \strokec10 self\strokec5 .n_arms = n_arms\
+    \strokec10 self\strokec5 .n_positions = n_positions\
+    \strokec4 assert\strokec5  n_positions == \strokec9 len\strokec8 (\strokec10 self\strokec5 .position_probabilities\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .S_kl = np.zeros\strokec8 ((\strokec5 n_arms\strokec8 ,\strokec5  n_positions\strokec8 ))\strokec5 \
+    \strokec10 self\strokec5 .S_k = np.zeros\strokec8 (\strokec5 n_arms\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .N_kl = np.zeros\strokec8 ((\strokec5 n_arms\strokec8 ,\strokec5  n_positions\strokec8 ))\strokec5 \
+    \strokec10 self\strokec5 .N_k = np.zeros\strokec8 (\strokec5 n_arms\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .tilde_N_kl = np.zeros\strokec8 ((\strokec5 n_arms\strokec8 ,\strokec5  n_positions\strokec8 ))\strokec5 \
+    \strokec10 self\strokec5 .tilde_N_k = np.zeros\strokec8 (\strokec5 n_arms\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .delta = delta\
+    \strokec10 self\strokec5 .empirical_means = np.zeros\strokec8 (\strokec5 n_arms\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .confidence = np.array\strokec8 ([\strokec5 np.inf\strokec8 ]\strokec5 *n_arms\strokec8 )\strokec5 \
+\
+  \strokec6 def\strokec5  \strokec9 pull_arm\strokec5 (\strokec10 self\strokec5 )\strokec8 :\strokec5 \
+    upper_conf = \strokec10 self\strokec5 .empirical_means + \strokec10 self\strokec5 .confidence\
+    \strokec4 return\strokec5  np.argsort\strokec8 (\strokec5 upper_conf\strokec8 )[::\strokec11 -1\strokec8 ][:\strokec10 self\strokec5 .n_positions\strokec8 ]\strokec5 \
+\
+  \strokec6 def\strokec5  \strokec9 update\strokec5 (\strokec10 self\strokec5 , \strokec10 super_arm\strokec5 , \strokec10 reward\strokec5 )\strokec8 :\strokec5 \
+    \strokec10 self\strokec5 .t += \strokec11 1\strokec5 \
+    \strokec4 for\strokec5  pos\strokec8 ,\strokec5  arm \strokec12 in\strokec5  \strokec9 enumerate\strokec8 (\strokec5 super_arm\strokec8 ):\strokec5 \
+      \strokec10 self\strokec5 .S_kl\strokec8 [\strokec5 arm\strokec8 ,\strokec5  pos\strokec8 ]\strokec5  += reward\strokec8 [\strokec5 pos\strokec8 ]\strokec5 \
+      \strokec10 self\strokec5 .N_kl\strokec8 [\strokec5 arm\strokec8 ,\strokec5  pos\strokec8 ]\strokec5  += \strokec11 1\strokec5 \
+      \strokec10 self\strokec5 .tilde_N_kl\strokec8 [\strokec5 arm\strokec8 ,\strokec5  pos\strokec8 ]\strokec5  += \strokec10 self\strokec5 .position_probabilities\strokec8 [\strokec5 pos\strokec8 ]\strokec5 \
+    \
+    \strokec10 self\strokec5 .S_k = \strokec10 self\strokec5 .S_kl.\strokec9 sum\strokec8 (\strokec5 axis=\strokec11 1\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .N_k = \strokec10 self\strokec5 .N_kl.\strokec9 sum\strokec8 (\strokec5 axis=\strokec11 1\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .tilde_N_k = \strokec10 self\strokec5 .tilde_N_kl.\strokec9 sum\strokec8 (\strokec5 axis=\strokec11 1\strokec8 )\strokec5 \
+\
+    \strokec10 self\strokec5 .empirical_means = \strokec10 self\strokec5 .S_k/\strokec10 self\strokec5 .tilde_N_k\
+    \strokec10 self\strokec5 .confidence = np.sqrt\strokec8 (\strokec10 self\strokec5 .N_k/\strokec10 self\strokec5 .tilde_N_k\strokec8 )\strokec5 *np.sqrt\strokec8 (\strokec10 self\strokec5 .delta/\strokec8 (\strokec11 2\strokec5 *\strokec10 self\strokec5 .tilde_N_k\strokec8 ))\strokec5 \
+    \strokec10 self\strokec5 .empirical_means\strokec8 [\strokec10 self\strokec5 .N_k == \strokec11 0\strokec8 ]\strokec5  = np.inf\
+    \strokec10 self\strokec5 .confidence\strokec8 [\strokec10 self\strokec5 .tilde_N_k == \strokec11 0\strokec8 ]\strokec5  = np.inf\
+    \strokec10 self\strokec5 .update_observations\strokec8 (\strokec5 super_arm\strokec8 ,\strokec5  reward\strokec8 )\strokec5 \
+\
+\
+  \strokec6 def\strokec5  \strokec9 update_observations\strokec5 (\strokec10 self\strokec5 , \strokec10 pulled_arm\strokec5 , \strokec10 reward\strokec5 )\strokec8 :\strokec5 \
+    \strokec10 self\strokec5 .collected_rewards = np.append\strokec8 (\strokec10 self\strokec5 .collected_rewards\strokec8 ,\strokec5  reward.\strokec9 sum\strokec8 ())\strokec5 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \strokec4 import\strokec5  numpy \strokec4 as\strokec5  np\
+\strokec4 import\strokec5  scipy.stats\
+\strokec4 import\strokec5  scipy.special \strokec4 as\strokec5  sc\
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \strokec6 class\strokec5  \strokec7 PBM_TS\strokec5 (\strokec7 Learner\strokec5 )\strokec8 :\strokec5 \
+  \strokec6 def\strokec5  \strokec9 __init__\strokec5 (\strokec10 self\strokec5 , \strokec10 n_arms\strokec5 , \strokec10 n_positions\strokec5 , \strokec10 position_probabilities\strokec5 , \strokec10 M\strokec5 =\strokec11 10\strokec5 )\strokec8 :\strokec5 \
+    super\strokec8 ()\strokec5 .\strokec9 __init__\strokec8 (\strokec5 n_arms\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .position_probabilities = position_probabilities\
+    \strokec10 self\strokec5 .n_arms = n_arms\
+    \strokec10 self\strokec5 .n_positions = n_positions\
+    \strokec4 assert\strokec5  n_positions == \strokec9 len\strokec8 (\strokec10 self\strokec5 .position_probabilities\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .S_kl = np.zeros\strokec8 ((\strokec5 n_arms\strokec8 ,\strokec5  n_positions\strokec8 ))\strokec5 \
+    \strokec10 self\strokec5 .S_k = np.zeros\strokec8 (\strokec5 n_arms\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .N_kl = np.zeros\strokec8 ((\strokec5 n_arms\strokec8 ,\strokec5  n_positions\strokec8 ))\strokec5 \
+    \strokec10 self\strokec5 .N_k = np.zeros\strokec8 (\strokec5 n_arms\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .tilde_N_kl = np.zeros\strokec8 ((\strokec5 n_arms\strokec8 ,\strokec5  n_positions\strokec8 ))\strokec5 \
+    \strokec10 self\strokec5 .tilde_N_k = np.zeros\strokec8 (\strokec5 n_arms\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .M = M\
+    \strokec10 self\strokec5 .beta_parameters = np.ones\strokec8 ((\strokec5 n_arms\strokec8 ,\strokec5  \strokec11 2\strokec8 ))\strokec5 \
+\
+\
+  \strokec6 def\strokec5  \strokec9 _beta_pdf\strokec5 (\strokec10 self\strokec5 , \strokec10 arm\strokec5 , \strokec10 theta\strokec5 )\strokec8 :\strokec5 \
+    a = \strokec10 self\strokec5 .beta_parameters\strokec8 [\strokec5 arm\strokec8 ,\strokec5  \strokec11 0\strokec8 ]\strokec5 \
+    b = \strokec10 self\strokec5 . beta_parameters\strokec8 [\strokec5 arm\strokec8 ,\strokec5  \strokec11 1\strokec8 ]\strokec5 \
+    \strokec4 return\strokec5  scipy.stats.beta.pdf\strokec8 (\strokec5 theta\strokec8 ,\strokec5  a\strokec8 ,\strokec5  b\strokec8 )\strokec5 \
+\
+\
+  \strokec6 def\strokec5  \strokec9 _real_pdf\strokec5 (\strokec10 self\strokec5 , \strokec10 arm\strokec5 , \strokec10 theta\strokec5 )\strokec8 :\strokec5 \
+    p = \strokec11 0\strokec5 \
+    \strokec4 for\strokec5  pos \strokec12 in\strokec5  \strokec9 range\strokec8 (\strokec10 self\strokec5 .n_positions\strokec8 ):\strokec5 \
+      pos_prob = \strokec10 self\strokec5 .position_probabilities\strokec8 [\strokec5 pos\strokec8 ]\strokec5 \
+      a = \strokec10 self\strokec5 .S_kl\strokec8 [\strokec5 arm\strokec8 ,\strokec5  pos\strokec8 ]\strokec5 \
+      b = \strokec10 self\strokec5 .N_kl\strokec8 [\strokec5 arm\strokec8 ,\strokec5 pos\strokec8 ]\strokec5  - \strokec10 self\strokec5 .S_kl\strokec8 [\strokec5 arm\strokec8 ,\strokec5 pos\strokec8 ]\strokec5 \
+      p += sc.xlog1py\strokec8 (\strokec5 b\strokec8 ,\strokec5  -theta*pos_prob\strokec8 )\strokec5  + sc.xlogy\strokec8 (\strokec5 a\strokec8 ,\strokec5  theta\strokec8 )\strokec5 \
+      p -= sc.betaln\strokec8 (\strokec5 a\strokec8 ,\strokec5  b\strokec8 )\strokec5 \
+      p += a*np.log\strokec8 (\strokec5 pos_prob\strokec8 )\strokec5 \
+    \strokec4 return\strokec5  np.exp\strokec8 (\strokec5 p\strokec8 )\strokec5 \
+\
+  \strokec6 def\strokec5  \strokec9 _rejection_sample\strokec5 (\strokec10 self\strokec5 , \strokec10 arm\strokec5 )\strokec8 :\strokec5 \
+    count = \strokec11 0\strokec5 \
+    \strokec4 while\strokec5  count <\strokec10 self\strokec5 .M\strokec8 :\strokec5 \
+      count += \strokec11 1\strokec5 \
+      theta = np. random.beta\strokec8 (\strokec10 self\strokec5 .beta_parameters\strokec8 [\strokec5 arm\strokec8 ,\strokec5  \strokec11 0\strokec8 ],\strokec5  \strokec10 self\strokec5 .beta_parameters\strokec8 [\strokec5 arm\strokec8 ,\strokec5  \strokec11 1\strokec8 ])\strokec5 \
+      u = np.random.uniform\strokec8 ()\strokec5 \
+      \strokec4 if\strokec5  u*\strokec10 self\strokec5 ._beta_pdf\strokec8 (\strokec5 arm\strokec8 ,\strokec5  theta\strokec8 )\strokec5  < \strokec10 self\strokec5 ._real_pdf\strokec8 (\strokec5 arm\strokec8 ,\strokec5  theta\strokec8 ):\strokec5 \
+        \strokec4 return\strokec5  theta\
+      \strokec4 return\strokec5  theta\
+    \
+  \strokec6 def\strokec5  \strokec9 pull_arm\strokec5 (\strokec10 self\strokec5 )\strokec8 :\strokec5 \
+    samples = np.array\strokec8 ([\strokec10 self\strokec5 ._rejection_sample\strokec8 (\strokec5 k\strokec8 )\strokec5  \strokec4 for\strokec5  k \strokec12 in\strokec5  \strokec9 range\strokec8 (\strokec10 self\strokec5 .n_arms\strokec8 )])\strokec5 \
+    \strokec4 return\strokec5  np.argsort\strokec8 (\strokec5 samples\strokec8 )[::\strokec11 -1\strokec8 ][:\strokec10 self\strokec5 .n_positions\strokec8 ]\strokec5 \
+\
+  \strokec6 def\strokec5  \strokec9 update\strokec5 (\strokec10 self\strokec5 , \strokec10 super_arm\strokec5 , \strokec10 reward\strokec5 )\strokec8 :\strokec5 \
+    \strokec10 self\strokec5 .t += \strokec11 1\strokec5 \
+    \strokec4 for\strokec5  pos\strokec8 ,\strokec5  arm \strokec12 in\strokec5  \strokec9 enumerate\strokec8 (\strokec5 super_arm\strokec8 ):\strokec5 \
+      \strokec10 self\strokec5 .S_kl\strokec8 [\strokec5 arm\strokec8 ,\strokec5 pos\strokec8 ]\strokec5  += reward\strokec8 [\strokec5 pos\strokec8 ]\strokec5 \
+      \strokec10 self\strokec5 .tilde_N_kl\strokec8 [\strokec5 arm\strokec8 ,\strokec5  pos\strokec8 ]\strokec5  += \strokec10 self\strokec5 .position_probabilities\strokec8 [\strokec5 pos\strokec8 ]\strokec5 \
+      \strokec10 self\strokec5 .N_kl\strokec8 [\strokec5 arm\strokec8 ,\strokec5 pos\strokec8 ]\strokec5  += \strokec11 1\strokec5 \
+\
+    \strokec10 self\strokec5 .S_k = \strokec10 self\strokec5 .S_kl.\strokec9 sum\strokec8 (\strokec5 axis=\strokec11 1\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .N_k = \strokec10 self\strokec5 .N_kl.\strokec9 sum\strokec8 (\strokec5 axis=\strokec11 1\strokec8 )\strokec5 \
+    \strokec10 self\strokec5 .tilde_N_k = \strokec10 self\strokec5 .tilde_N_kl.\strokec9 sum\strokec8 (\strokec5 axis=\strokec11 1\strokec8 )\strokec5 \
+\
+    \strokec4 for\strokec5  arm \strokec12 in\strokec5  super_arm\strokec8 :\strokec5 \
+      pos = np.argmax\strokec8 (\strokec10 self\strokec5 .tilde_N_kl\strokec8 [\strokec5 arm\strokec8 ,\strokec5  \strokec8 :])\strokec5 \
+      \strokec10 self\strokec5 .beta_parameters\strokec8 [\strokec5 arm\strokec8 ,\strokec5  \strokec11 0\strokec8 ]\strokec5  = \strokec9 max\strokec8 (\strokec10 self\strokec5 .S_kl\strokec8 [\strokec5 arm\strokec8 ,\strokec5  pos\strokec8 ]\strokec5  + \strokec11 1\strokec8 ,\strokec5  \strokec11 1\strokec8 )\strokec5 \
+      \strokec10 self\strokec5 .beta_parameters\strokec8 [\strokec5 arm\strokec8 ,\strokec5  \strokec11 1\strokec8 ]\strokec5  = \strokec9 max\strokec8 (\strokec10 self\strokec5 .tilde_N_kl\strokec8 [\strokec5 arm\strokec8 ,\strokec5  pos\strokec8 ]\strokec5  - \strokec10 self\strokec5 .S_kl\strokec8 [\strokec5 arm\strokec8 ,\strokec5  pos\strokec8 ]\strokec5  + \strokec11 1\strokec8 ,\strokec5  \strokec11 1\strokec8 )\strokec5 \
+\
+    \strokec10 self\strokec5 .update_observations\strokec8 (\strokec5 super_arm\strokec8 ,\strokec5  reward\strokec8 )\strokec5 \
+\
+  \strokec6 def\strokec5  \strokec9 update_observations\strokec5 (\strokec10 self\strokec5 , \strokec10 pulled_arm\strokec5 , \strokec10 reward\strokec5 )\strokec8 :\strokec5 \
+      \strokec10 self\strokec5 .collected_rewards = np.append\strokec8 (\strokec10 self\strokec5 .collected_rewards\strokec8 ,\strokec5  reward.\strokec9 sum\strokec8 ())\strokec5 \
+\
+    \
+\
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \strokec4 import\strokec5  matplotlib.pyplot \strokec4 as\strokec5  plt\
+\strokec4 from\strokec5  tqdm.autonotebook \strokec4 import\strokec5  tqdm\
+\
+\
+\strokec4 if\strokec5  __name__ == \strokec13 '__main__'\strokec8 :\strokec5 \
+  arm_probabilities = np.array\strokec8 ([\strokec11 0.45\strokec8 ,\strokec5  \strokec11 0.35\strokec8 ,\strokec5  \strokec11 0.25\strokec8 ,\strokec5  \strokec11 0.15\strokec8 ,\strokec5  \strokec11 0.05\strokec8 ])\strokec5 \
+  position_probabilities = np.array\strokec8 ([\strokec11 0.9\strokec8 ,\strokec5  \strokec11 0.6\strokec8 ,\strokec5  \strokec11 0.3\strokec8 ])\strokec5 \
+  n_pos = \strokec11 3\strokec5 \
+  n_arms = \strokec11 5\strokec5 \
+\
+  T = \strokec11 3000\strokec5 \
+  opt = \strokec8 (\strokec5 np.sort\strokec8 (\strokec5 arm_probabilities\strokec8 )[::\strokec11 -1\strokec8 ][:\strokec5 n_pos\strokec8 ]\strokec5 *position_probabilities\strokec8 )\strokec5 .\strokec9 sum\strokec8 ()\strokec5 \
+  \strokec9 print\strokec8 (\strokec5 opt\strokec8 )\strokec5 \
+\
+  n_experiments = \strokec11 50\strokec5 \
+  ts_rewards_per_experiment = \strokec8 []\strokec5 \
+  ucb_reward_per_experiment = \strokec8 []\strokec5 \
+\
+\
+  \strokec4 for\strokec5  e \strokec12 in\strokec5  \strokec9 range\strokec8 (\strokec5 n_experiments\strokec8 ):\strokec5 \
+    \strokec9 print\strokec8 (\strokec5 e\strokec8 )\strokec5 \
+    env = Environment_PBM\strokec8 (\strokec5 n_arms=n_arms\strokec8 ,\strokec5  n_positions=\strokec11 3\strokec8 ,\strokec5  arm_probabilities=arm_probabilities\strokec8 ,\strokec5  position_probabilities=position_probabilities\strokec8 )\strokec5 \
+    ts_learner = PBM_TS\strokec8 (\strokec5 n_arms\strokec8 ,\strokec5  n_pos\strokec8 ,\strokec5  np.array\strokec8 ([\strokec11 0.9\strokec8 ,\strokec5  \strokec11 0.6\strokec8 ,\strokec5  \strokec11 0.3\strokec8 ]),\strokec5  M=\strokec11 10\strokec8 )\strokec5 \
+    ucb_learner = PBM_UCB\strokec8 (\strokec5 n_arms\strokec8 ,\strokec5  n_pos\strokec8 ,\strokec5  np.array\strokec8 ([\strokec11 0.9\strokec8 ,\strokec11 0.6\strokec8 ,\strokec11 0.3\strokec8 ]),\strokec5  delta=\strokec11 10\strokec8 )\strokec5 \
+    \strokec4 for\strokec5  t \strokec12 in\strokec5  tqdm\strokec8 (\strokec9 range\strokec8 (\strokec5 T\strokec8 )):\strokec5 \
+      \strokec14 #Thompson sampling learner\strokec5 \
+      pulled_arm = ts_learner.pull_arm\strokec8 ()\strokec5 \
+      reward = env.\strokec9 round\strokec8 (\strokec5 pulled_arm\strokec8 )\strokec5 \
+      ts_learner.update\strokec8 (\strokec5 pulled_arm\strokec8 ,\strokec5  reward\strokec8 )\strokec5 \
+\
+      \strokec14 #UCB learner\strokec5 \
+      pulled_arm = ucb_learner.pull_arm\strokec8 ()\strokec5 \
+      reward = env.\strokec9 round\strokec8 (\strokec5 pulled_arm\strokec8 )\strokec5 \
+      ucb_learner.update\strokec8 (\strokec5 pulled_arm\strokec8 ,\strokec5  reward\strokec8 )\strokec5 \
+    ts_rewards_per_experiment.append\strokec8 (\strokec5 ts_learner.collected_rewards\strokec8 )\strokec5 \
+    ucb_reward_per_experiment.append\strokec8 (\strokec5 ucb_learner.collected_rewards\strokec8 )\strokec5 \
+\
+\
+  plt.figure\strokec8 (\strokec11 0\strokec8 )\strokec5 \
+  plt.ylabel\strokec8 (\strokec13 "Regret"\strokec8 )\strokec5 \
+  plt.xlabel\strokec8 (\strokec13 "t"\strokec8 )\strokec5 \
+  plt.plot\strokec8 (\strokec5 np.cumsum\strokec8 (\strokec5 np.mean\strokec8 (\strokec5 opt - ts_rewards_per_experiment\strokec8 ,\strokec5  axis=\strokec11 0\strokec8 )),\strokec5  \strokec13 'r'\strokec8 )\strokec5 \
+  plt.plot\strokec8 (\strokec5 np.cumsum\strokec8 (\strokec5 np.mean\strokec8 (\strokec5 opt - ucb_reward_per_experiment\strokec8 ,\strokec5  axis=\strokec11 0\strokec8 )),\strokec5  \strokec13 'b'\strokec8 )\strokec5  \
+  plt.legend\strokec8 ([\strokec13 "TS"\strokec8 ,\strokec5  \strokec13 "UCB"\strokec8 ])\strokec5 \
+  plt.show\strokec8 ()\strokec5       \
+}
