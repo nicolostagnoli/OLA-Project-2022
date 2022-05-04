@@ -46,6 +46,22 @@ class WebpageSession:
             #qui non ho cliccato su nessun secondary
             #return
 
+def simulate_episode(init_prob_matrix, initial_product):
+    t = 0
+    product_prices = [10, 20, 30, 40, 50]
+    prob_matrix = init_prob_matrix.copy()
+    n_nodes = prob_matrix.shape[0]
+    initial_active_nodes = [0, 0, 0, 0 ,0]
+    initial_active_nodes[initial_product - 1] = 1
+    show_matrix = np.array([initial_active_nodes])
+    buy_matrix = np.zeros(shape = (1, n_nodes))
+    #Buy or Not Buy
+    reservation_price = np.random.randint(0, 50)
+    if reservation_price > product_prices[initial_product]:
+        buy_matrix[t, initial_product - 1] = 1
+    else:
+        return show_matrix, buy_matrix
+
 
 if __name__ == "__main__":
 
@@ -62,6 +78,3 @@ if __name__ == "__main__":
             group = user_choices[c]
             for i in range(0, group):
                 #SIMULATE PURCHASE OF PRODUCTS
-            
-
-        
