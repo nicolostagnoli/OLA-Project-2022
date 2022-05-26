@@ -19,6 +19,7 @@ def simulate_episode(init_prob_matrix, n_steps_max, initial_product, lambd, buy_
     initial_active_nodes = np.zeros(5, dtype=int)
     initial_active_nodes[initial_product] = 1
     history = np.array([initial_active_nodes])
+    buy_or_not_history = np.zeros(5, dtype=int)
     active_nodes = initial_active_nodes
     newly_active_nodes = active_nodes
     t=0
@@ -32,7 +33,10 @@ def simulate_episode(init_prob_matrix, n_steps_max, initial_product, lambd, buy_
         for i, node in enumerate(active_nodes):
             if node == 1:
                 random_sample = np.random.uniform(0.0, 1.0)
-                buy_or_not_nodes[i] = random_sample < buy_probability_matrix[i][price_index[i]]
+                bought = random_sample < buy_probability_matrix[i][price_index[i]]
+                buy_or_not_nodes[i] = bought
+                if bought: buy_or_not_history[i] = 1
+                else: buy_or_not_history[i] = -1
 
         p = (prob_matrix.T * buy_or_not_nodes).T
 
@@ -64,7 +68,7 @@ def simulate_episode(init_prob_matrix, n_steps_max, initial_product, lambd, buy_
         t += 1
 
         #all edges leaving from the node that didn't buy go to 0 
-    return history
+    return buy_or_not_history
 
 
 
@@ -116,9 +120,8 @@ while(not stop):
             uc = np.random.choice(userClasses, 1)[0]
             initial_product = np.random.choice(5, 1, [a for a in uc.alfas])[0]
             history = simulate_episode(uc.p_matrix, 10, initial_product, 0.5, uc.conversion_rate_matrix, temp_price_index)
-            tot_products_bought = np.zeros(5)
-            for row in history:
-                tot_products_bought +=  row
+            tot_products_bought = history
+            tot_products_bought[tot_products_bought == -1] = 0
             tot_products_bought *= uc.num_products_bought
             conversion_rate_temp_prices = uc.conversion_rate_matrix[:, temp_price_index]
             revenue_per_user = np.sum(tot_products_bought*temp_optimal_prices*conversion_rate_temp_prices)
