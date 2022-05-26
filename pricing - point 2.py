@@ -70,8 +70,6 @@ def simulate_episode(init_prob_matrix, n_steps_max, initial_product, lambd, buy_
         #all edges leaving from the node that didn't buy go to 0 
     return buy_or_not_history
 
-
-
 p_matrix = np.array([[0,0.5,0,0.5,0],
                      [0.5,0,0.5,0,0],
                      [0,0.5,0,0,0.5],
@@ -90,62 +88,69 @@ p3 = Product("p3", price_vector )
 p4 = Product("p4", price_vector )
 p5 = Product("p5", price_vector )
 
+repeat = 1
 total_daily_users = userClass1.number_of_user + userClass2.number_of_user + userClass3.number_of_user
 n_episodes = 100
 
-optimal_prices = [p1.price_vector[0], p2.price_vector[0], p3.price_vector[0], p4.price_vector[0], p5.price_vector[0]]
-optimal_prices_index = np.zeros(5, dtype=int)
-best_total_revenue = 0
+average_reward = 0
+for i in range(0, repeat):
 
-print("starting prices: ", optimal_prices)
-print("prices index: ", optimal_prices_index)
+    optimal_prices = [p1.price_vector[0], p2.price_vector[0], p3.price_vector[0], p4.price_vector[0], p5.price_vector[0]]
+    optimal_prices_index = np.zeros(5, dtype=int)
+    best_total_revenue = 0
 
-#try to raise one price at time and calculate reward
-stop = False
-while(not stop):
-    print("Iteration")
-    temp_revenue = np.zeros(5)
-    if np.all(optimal_prices_index == 3):
-        break
-    for i in range(0, 5):
-        total_revenue = 0
-        temp_price_index = np.copy(optimal_prices_index)
-        temp_price_index[i] += 1
-        for indx in temp_price_index:
-            if indx > 3: temp_price_index[i] = 3
-        temp_optimal_prices = [p1.price_vector[temp_price_index[0]], p2.price_vector[temp_price_index[1]], p3.price_vector[temp_price_index[2]],
-                               p4.price_vector[temp_price_index[3]], p5.price_vector[temp_price_index[4]]]
+    print("starting prices: ", optimal_prices)
+    print("prices index: ", optimal_prices_index)
 
-        for j in range(0, total_daily_users):
-            uc = np.random.choice(userClasses, 1)[0]
-            initial_product = np.random.choice(5, 1, [a for a in uc.alfas])[0]
-            history = simulate_episode(uc.p_matrix, 10, initial_product, 0.5, uc.conversion_rate_matrix, temp_price_index)
-            tot_products_bought = history
-            tot_products_bought[tot_products_bought == -1] = 0
-            tot_products_bought *= uc.num_products_bought
-            conversion_rate_temp_prices = uc.conversion_rate_matrix[:, temp_price_index]
-            revenue_per_user = np.sum(tot_products_bought*temp_optimal_prices*conversion_rate_temp_prices)
-            temp_revenue[i] += revenue_per_user
+    #try to raise one price at time and calculate reward
+    stop = False
+    while(not stop):
+        temp_revenue = np.zeros(5)
+        if np.all(optimal_prices_index == 3):
+            break
+        for i in range(0, 5):
+            total_revenue = 0
+            temp_price_index = np.copy(optimal_prices_index)
+            temp_price_index[i] += 1
+            for indx in temp_price_index:
+                if indx > 3: temp_price_index[i] = 3
+            temp_optimal_prices = [p1.price_vector[temp_price_index[0]], p2.price_vector[temp_price_index[1]], p3.price_vector[temp_price_index[2]],
+                                   p4.price_vector[temp_price_index[3]], p5.price_vector[temp_price_index[4]]]
 
-        print("Experiment reward: ", temp_revenue[i])
-    
-    product_to_raise = np.argmax(temp_revenue)
-    while(optimal_prices_index[product_to_raise] >= 3):
-        temp_revenue[product_to_raise] = -1.0
+            for j in range(0, total_daily_users):
+                uc = np.random.choice(userClasses, 1)[0]
+                initial_product = np.random.choice(5, 1, [a for a in uc.alfas])[0]
+                history = simulate_episode(uc.p_matrix, 10, initial_product, 0.5, uc.conversion_rate_matrix, temp_price_index)
+                tot_products_bought = history
+                tot_products_bought[tot_products_bought == -1] = 0
+                tot_products_bought *= uc.num_products_bought
+                conversion_rate_temp_prices = uc.conversion_rate_matrix[:, temp_price_index]
+                revenue_per_user = np.sum(tot_products_bought*temp_optimal_prices*conversion_rate_temp_prices)
+                temp_revenue[i] += revenue_per_user
+
+            print("Experiment reward: ", temp_revenue[i])
+
         product_to_raise = np.argmax(temp_revenue)
-    #after 5 experiments, check if the best experiment is better than the current configuration, then update prices
-    #if no experiment is better, stop
-    if(np.max(temp_revenue) > best_total_revenue):
-        best_total_revenue = np.max(temp_revenue)
-        optimal_prices_index[product_to_raise] += 1
-        optimal_prices = [p1.price_vector[optimal_prices_index[0]], p2.price_vector[optimal_prices_index[1]], p3.price_vector[optimal_prices_index[2]],
-                          p4.price_vector[optimal_prices_index[3]], p5.price_vector[optimal_prices_index[4]]]
-        print("Product to raise: ", product_to_raise)
-    else:
-        print("No increment in reward, stop")
-        stop = True
-    
-    print("current prices: ", optimal_prices)
-    print("current prices index: ", optimal_prices_index)
-        
+        while(optimal_prices_index[product_to_raise] >= 3):
+            temp_revenue[product_to_raise] = -1.0
+            product_to_raise = np.argmax(temp_revenue)
+        #after 5 experiments, check if the best experiment is better than the current configuration, then update prices
+        #if no experiment is better, stop
+        if(np.max(temp_revenue) > best_total_revenue):
+            best_total_revenue = np.max(temp_revenue)
+            optimal_prices_index[product_to_raise] += 1
+            optimal_prices = [p1.price_vector[optimal_prices_index[0]], p2.price_vector[optimal_prices_index[1]], p3.price_vector[optimal_prices_index[2]],
+                              p4.price_vector[optimal_prices_index[3]], p5.price_vector[optimal_prices_index[4]]]
+            print("Product to raise: ", product_to_raise)
+        else:
+            print("No increment in reward, stop")
+            stop = True
+
+        print("current prices: ", optimal_prices)
+        print("current prices index: ", optimal_prices_index)
+
+    average_reward += best_total_revenue
+
+average_reward /= repeat
+print(average_reward)
 

@@ -15,7 +15,7 @@ class Learner:
 class UCB(Learner):
     def __init__(self, n_arms):
         super().__init__(n_arms)
-        self.empirical_means = np.zeros(n_arms) + np.array([0.75, 0.5, 0.25, 0.1])
+        self.empirical_means = np.zeros(n_arms) + 0.5 #np.array([0.75, 0.5, 0.25, 0.1])
         self.confidence = np.array([np.inf]*n_arms)
     
     def pull_arm(self):
@@ -227,3 +227,5 @@ for ep in range(0, n_episodes):
     for ucb in ucbs:
         print("Means: ", ucb.empirical_means)
     print("\n")
+
+#20277.34050463985
