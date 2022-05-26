@@ -95,24 +95,6 @@ best_total_revenue = 0
 
 print("starting prices: ", optimal_prices)
 print("prices index: ", optimal_prices_index)
- 
-#first iteration to evaluate the "base" revenue with lowest prices for every product
-for uc in userClasses:
-  for j in range(0, uc.number_of_user):
-    initial_product = np.random.choice(5, 1, [a for a in uc.alfas])[0]
-
-    history = simulate_episode(uc.p_matrix, 10, initial_product, 0.5, uc.conversion_rate_matrix, optimal_prices_index)
-    
-    tot_products_bought = np.zeros(5)
-
-    for row in history:
-      tot_products_bought +=  row
-
-    tot_products_bought *= uc.num_products_bought
-    revenue_per_user = np.sum(tot_products_bought*optimal_prices)
-    best_total_revenue += revenue_per_user
-
-print("Lowest prices reward: ", best_total_revenue)
 
 #try to raise one price at time and calculate reward
 stop = False
@@ -130,16 +112,17 @@ while(not stop):
         temp_optimal_prices = [p1.price_vector[temp_price_index[0]], p2.price_vector[temp_price_index[1]], p3.price_vector[temp_price_index[2]],
                                p4.price_vector[temp_price_index[3]], p5.price_vector[temp_price_index[4]]]
 
-        for uc in userClasses:
-            for j in range(0, uc.number_of_user):
-                initial_product = np.random.choice(5, 1, [a for a in uc.alfas])[0]
-                history = simulate_episode(uc.p_matrix, 10, initial_product, 0.5, uc.conversion_rate_matrix, temp_price_index)
-                tot_products_bought = np.zeros(5)
-                for row in history:
-                  tot_products_bought +=  row
-                tot_products_bought *= uc.num_products_bought
-                revenue_per_user = np.sum(tot_products_bought*temp_optimal_prices)
-                temp_revenue[i] += revenue_per_user
+        for j in range(0, total_daily_users):
+            uc = np.random.choice(userClasses, 1)[0]
+            initial_product = np.random.choice(5, 1, [a for a in uc.alfas])[0]
+            history = simulate_episode(uc.p_matrix, 10, initial_product, 0.5, uc.conversion_rate_matrix, temp_price_index)
+            tot_products_bought = np.zeros(5)
+            for row in history:
+                tot_products_bought +=  row
+            tot_products_bought *= uc.num_products_bought
+            conversion_rate_temp_prices = uc.conversion_rate_matrix[:, temp_price_index]
+            revenue_per_user = np.sum(tot_products_bought*temp_optimal_prices*conversion_rate_temp_prices)
+            temp_revenue[i] += revenue_per_user
 
         print("Experiment reward: ", temp_revenue[i])
     
