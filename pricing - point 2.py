@@ -88,7 +88,7 @@ p3 = Product("p3", price_vector )
 p4 = Product("p4", price_vector )
 p5 = Product("p5", price_vector )
 
-repeat = 1
+repeat = 100
 total_daily_users = userClass1.number_of_user + userClass2.number_of_user + userClass3.number_of_user
 n_episodes = 100
 
