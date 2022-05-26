@@ -15,7 +15,7 @@ class Learner:
 class UCB(Learner):
     def __init__(self, n_arms):
         super().__init__(n_arms)
-        self.empirical_means = np.zeros(n_arms)
+        self.empirical_means = np.zeros(n_arms) + np.array([0.75, 0.5, 0.25, 0.1])
         self.confidence = np.array([np.inf]*n_arms)
     
     def pull_arm(self):
@@ -53,6 +53,7 @@ def simulate_episode(init_prob_matrix, n_steps_max, initial_product, lambd, buy_
     initial_active_nodes = np.zeros(5, dtype=int)
     initial_active_nodes[initial_product] = 1
     history = np.array([initial_active_nodes])
+    buy_or_not_history = np.zeros(5, dtype=int)
     active_nodes = initial_active_nodes
     newly_active_nodes = active_nodes
     t=0
@@ -66,7 +67,10 @@ def simulate_episode(init_prob_matrix, n_steps_max, initial_product, lambd, buy_
         for i, node in enumerate(active_nodes):
             if node == 1:
                 random_sample = np.random.uniform(0.0, 1.0)
-                buy_or_not_nodes[i] = random_sample < buy_probability_matrix[i][price_index[i]]
+                bought = random_sample < buy_probability_matrix[i][price_index[i]]
+                buy_or_not_nodes[i] = bought
+                if bought: buy_or_not_history[i] = 1
+                else: buy_or_not_history[i] = -1
 
         p = (prob_matrix.T * buy_or_not_nodes).T
 
@@ -98,7 +102,7 @@ def simulate_episode(init_prob_matrix, n_steps_max, initial_product, lambd, buy_
         t += 1
 
         #all edges leaving from the node that didn't buy go to 0 
-    return history
+    return buy_or_not_history
 
 def Greedy(conversion_rate_matrix):
     optimal_prices = [p1.price_vector[0], p2.price_vector[0], p3.price_vector[0], p4.price_vector[0], p5.price_vector[0]]
@@ -127,15 +131,12 @@ def Greedy(conversion_rate_matrix):
                                    p4.price_vector[temp_price_index[3]], p5.price_vector[temp_price_index[4]]]
     
             #simulate all daily users
-            histories = []
             for j in range(0, total_daily_users):
                 uc = np.random.choice(userClasses, 1)[0]
                 initial_product = np.random.choice(5, 1, [a for a in uc.alfas])[0]
                 history = simulate_episode(uc.p_matrix, 10, initial_product, 0.5, conversion_rate_matrix, temp_price_index)
-                histories.append(history)
-                tot_products_bought = np.zeros(5)
-                for row in history:
-                    tot_products_bought +=  row
+                tot_products_bought = history
+                tot_products_bought[tot_products_bought == -1] = 0
                 tot_products_bought *= uc.num_products_bought
                 conversion_rate_temp_prices = conversion_rate_matrix[:, temp_price_index]
                 revenue_per_user = np.sum(tot_products_bought*temp_optimal_prices*conversion_rate_temp_prices)
@@ -207,14 +208,16 @@ for ep in range(0, n_episodes):
         uc = np.random.choice(userClasses, 1)[0]
         initial_product = np.random.choice(5, 1, [a for a in uc.alfas])[0]
         history = simulate_episode(uc.p_matrix, 10, initial_product, 0.5, uc.conversion_rate_matrix, greedy_price_index)
-        
+
         #update ucbs estimations
         tot_products_bought = np.zeros(5)
-        for row in history:
-            for idx, p in enumerate(row):
-                ucbs[idx].update(greedy_price_index[idx], p)
-            tot_products_bought +=  row
-
+        for idx, p in enumerate(history):
+            if p == 1: ucbs[idx].update(greedy_price_index[idx], 1)
+            if p == -1: ucbs[idx].update(greedy_price_index[idx], 0)
+        tot_products_bought = history
+        tot_products_bought[tot_products_bought == -1] = 0
+        tot_products_bought *= uc.num_products_bought
+        
         #calculate reward
         conversion_rate_temp_prices = uc.conversion_rate_matrix[:, greedy_price_index]
         daily_reward += np.sum(tot_products_bought*greedy_prices*conversion_rate_temp_prices)
