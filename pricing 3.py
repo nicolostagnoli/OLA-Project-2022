@@ -15,7 +15,7 @@ class Learner:
 class UCB(Learner):
     def __init__(self, n_arms):
         super().__init__(n_arms)
-        self.empirical_means = np.zeros(n_arms) + 1
+        self.empirical_means = np.zeros(n_arms)
         self.confidence = np.array([np.inf]*n_arms)
     
     def pull_arm(self):
@@ -104,7 +104,7 @@ def Greedy(conversion_rate_matrix):
     optimal_prices = [p1.price_vector[0], p2.price_vector[0], p3.price_vector[0], p4.price_vector[0], p5.price_vector[0]]
     optimal_prices_index = np.zeros(5, dtype=int)
     best_total_revenue = 0
-    
+
     #print("starting prices: ", optimal_prices)
     #print("prices index: ", optimal_prices_index)
     
@@ -137,7 +137,7 @@ def Greedy(conversion_rate_matrix):
                 for row in history:
                     tot_products_bought +=  row
                 tot_products_bought *= uc.num_products_bought
-                conversion_rate_temp_prices = uc.conversion_rate_matrix[:, temp_price_index]
+                conversion_rate_temp_prices = conversion_rate_matrix[:, temp_price_index]
                 revenue_per_user = np.sum(tot_products_bought*temp_optimal_prices*conversion_rate_temp_prices)
                 temp_revenue[i] += revenue_per_user
     
@@ -197,7 +197,7 @@ for ep in range(0, n_episodes):
     print("Day ", ep)
     
     #run greedy algorithm
-    ucbs_conversion_rate = [ucb.empirical_means for ucb in ucbs]
+    ucbs_conversion_rate = np.array([ucb.empirical_means for ucb in ucbs])
     greedy_price_index, greedy_prices = Greedy(ucbs_conversion_rate)
     print("Price Configuration: ", greedy_price_index)
 
